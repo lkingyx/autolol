@@ -16,7 +16,7 @@ class Main():
                 path = os.getcwd()+'\\select\\'+selectVar.get()
                 files = tools.get_all_files(path)
                 for filename in files:
-                    self.clicked = tools.get_card(path+'\\'+filename, self.clicked)
+                    self.clicked = tools.get_card(path+'\\'+filename)
             time.sleep(0.05)
 
     def get_all_folders(self,directory):
@@ -86,9 +86,9 @@ class Main():
         thread.start()
         
         # 创建一个线程对象
-        # thread2 = threading.Thread(target=self.screen, daemon=True)
+        thread2 = threading.Thread(target=self.screen, daemon=True)
         # 启动线程
-        # thread2.start()
+        thread2.start()
         
         # 开始事件循环
         root.mainloop()
@@ -97,7 +97,7 @@ class Main():
         while True:
             if self.state_var.get():
                 tools.extract_cards()
-            time.sleep(1)
+            time.sleep(0.5)
  
 if __name__ == '__main__':
     Main().main()
