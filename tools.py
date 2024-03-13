@@ -1,10 +1,8 @@
 import pyautogui, pyscreeze
 import time
-import cv2
 import os
 from PIL import Image, ImageChops
 import numpy as np
-from skimage.metrics import structural_similarity as ssim
 
 # 卡区坐标
 card_locate = (400, 920, 1490, 1080)
@@ -55,7 +53,10 @@ def get_all_files(directory):
             for filename in filenames:
                 all_files.append(filename)
         return all_files
-    
+
+def get_all_folders(directory):
+        return [f for f in os.listdir(directory) if os.path.isdir(os.path.join(directory, f))]
+
 def extract_cards(image:Image = None):
     
     save_path = "./cards_test"
@@ -109,4 +110,4 @@ def test_extract_cards():
         game_image = game_image.crop(card_locate)
         extract_cards(game_image)
 
-test_extract_cards()
+# test_extract_cards()

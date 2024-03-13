@@ -1,85 +1,43 @@
 import os
+import sys
 import time
 import threading
-import tkinter as tk
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QWidget, QButtonGroup, QPushButton
 import tools
-class Main():
-    def __init__(self) -> None:
-        self.toggle_button = None
-        self.state_var = None
-        self.num = 0
-        self.clicked = False
-    
-    def detectCards(self):
-        while True:
-            if self.state_var.get():
-                path = os.getcwd()+'\\select\\'+selectVar.get()
-                files = tools.get_all_files(path)
-                for filename in files:
-                    self.clicked = tools.get_card(path+'\\'+filename)
-            time.sleep(0.05)
+from main_ui import Ui_Form
+from card_library import CardLibraryWindow
 
-    def get_all_folders(self,directory):
-        return [f for f in os.listdir(directory) if os.path.isdir(os.path.join(directory, f))]
-
-    def showRadiobutton(self, top):
-        # 获取当前目录下的所有文件夹
-        folders = self.get_all_folders(os.getcwd() + '\\select')
-        label = tk.Label(top, text="选择拿卡阵容：", anchor='nw')
-        label.pack()
-        if len(folders) == 0 : return
-        # 定义变量来存储单选框的选择
-        global selectVar
-        selectVar = tk.StringVar(value=folders[0]) 
-        # 打印所有文件夹
-        for folder in folders:
-            # 创建单选框并添加到Frame中
-            radio = tk.Radiobutton(top, text=folder, variable=selectVar, value=folder)
-            radio.pack()
-
-    def close_all_windows(self, top, root, event=None):
-        top.destroy()
-        root.destroy()
-    
-    def toggle_state(self, state_var):
-        # 切换状态变量的值
-        state_var.set(not state_var.get())
-        # 在按钮上显示当前状态
-        self.toggle_button.config(text="自动拿卡：开" if state_var.get() else "自动拿卡：关")
-    
-    def create_floating_window(self,root, width, height, text):
-        # 创建顶级窗口
-        top = tk.Toplevel(root)
+class TransparentWindow(QWidget):
+    def __init__(self):
+        super().__init__()
         
-        # 设置窗口大小
-        top.geometry(f'{width}x{height}+5+5')
-        top.resizable(False, False)
-        top.wm_attributes('-topmost', True)
-        #set_window_style(floating_window, ctypes.windll.user32.GetWindowLongPtrW(floating_window.winfo_id(), -16) & &#126;0x20)
+        self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
+        self.setGeometry(100, 100, 200, 200)  # 设置窗口位置和大小
+        self.setStyleSheet("background-color: #EEE;")  # 设置背景透明
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
+        self.buttonGroup = QButtonGroup()
+        self.buttonGroup.addButton(self.ui.radioButton)
+        self.buttonGroup.addButton(self.ui.radioButton_2)
+        self.buttonGroup.addButton(self.ui.radioButton_3)
+        self.buttonGroup.addButton(self.ui.radioButton_4)
+        self.buttonGroup.addButton(self.ui.radioButton_5)
+        self.buttonGroup.buttonClicked.connect(self.on_button_clicked)
         
-        # 创建开关按钮
-        # 创建一个变量来存储按钮的状态
-        self.state_var = tk.BooleanVar()
-        self.state_var.set(False)
-        self.toggle_button = tk.Button(top, text="自动拿卡：关", command=lambda: self.toggle_state(self.state_var))
-        self.toggle_button.pack(pady= 10)
+        self.ui.lineup1.clicked.connect(lambda: self.show_card_library_window(self.ui.lineup1))
+        self.ui.lineup2.clicked.connect(lambda: self.show_card_library_window(self.ui.lineup2))
+        self.ui.lineup3.clicked.connect(lambda: self.show_card_library_window(self.ui.lineup3))
+        self.ui.lineup4.clicked.connect(lambda: self.show_card_library_window(self.ui.lineup4))
+        self.ui.lineup5.clicked.connect(lambda: self.show_card_library_window(self.ui.lineup5))
         
-        self.showRadiobutton(top)
-
-        # 绑定悬浮窗口的关闭事件
-        top.protocol("WM_DELETE_WINDOW", lambda: self.close_all_windows(top, root))
+        self.ui.pushButton_2.clicked.connect(self.on_start_state_clicked)
+        self.ui.pushButton.clicked.connect(self.on_save_card_clicked)
         
-        return top
-    
-    def main(self):
-        # 创建主窗口
-        root = tk.Tk()
-        root.title("Floating Window Example")
-        root.withdraw()
+        self.select_lineup_name = self.ui.radioButton.objectName()
+        self.start_state = False
+        self.save_card = False
         
-        # 创建悬浮窗口
-        floating_window = self.create_floating_window(root, 200, 200, "Floating Window!")
-    
         # 创建一个线程对象
         thread = threading.Thread(target=self.detectCards, daemon=True)
         # 启动线程
@@ -89,15 +47,46 @@ class Main():
         thread2 = threading.Thread(target=self.screen, daemon=True)
         # 启动线程
         thread2.start()
-        
-        # 开始事件循环
-        root.mainloop()
- 
+    
+    def detectCards(self):
+        while True:
+            if self.start_state:
+                path = os.getcwd()+'\\select\\' + self.select_lineup_name
+                files = tools.get_all_files(path)
+                for filename in files:
+                    self.clicked = tools.get_card(path+'\\'+filename)
+            time.sleep(0.05)
+    
     def screen(self): 
         while True:
-            if self.state_var.get():
+            if self.save_card:
                 tools.extract_cards()
             time.sleep(0.5)
- 
+        
+    def on_button_clicked(self, button:QButtonGroup):
+        self.select_lineup_name = button.objectName()
+    
+    def on_start_state_clicked(self):
+        if self.start_state:
+            self.start_state = False
+            self.ui.pushButton_2.setText(self.ui.pushButton_2.text().replace("开", "关"))
+        else:
+            self.start_state = True
+            self.ui.pushButton_2.setText(self.ui.pushButton_2.text().replace("关", "开"))
+    
+    def on_save_card_clicked(self):
+        if self.save_card:
+            self.save_card = False
+            self.ui.pushButton.setText(self.ui.pushButton.text().replace("开", "关"))
+        else:
+            self.save_card = True
+            self.ui.pushButton.setText(self.ui.pushButton.text().replace("关", "开"))
+    
+    def show_card_library_window(self, button:QPushButton):
+        CardLibraryWindow(button).exec()
+
 if __name__ == '__main__':
-    Main().main()
+    app = QApplication(sys.argv)
+    window = TransparentWindow()
+    window.show()
+    sys.exit(app.exec())
