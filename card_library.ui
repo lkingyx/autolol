@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>400</height>
+    <width>585</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>506</width>
-     <height>158</height>
+     <width>590</width>
+     <height>163</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -27,22 +27,25 @@
      <enum>QLayout::SetMinimumSize</enum>
     </property>
     <property name="leftMargin">
-     <number>5</number>
+     <number>10</number>
     </property>
     <property name="topMargin">
-     <number>5</number>
+     <number>10</number>
+    </property>
+    <property name="rightMargin">
+     <number>10</number>
     </property>
     <item>
      <widget class="QLabel" name="lineup_text">
       <property name="minimumSize">
        <size>
-        <width>500</width>
+        <width>570</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
+        <width>570</width>
         <height>15</height>
        </size>
       </property>

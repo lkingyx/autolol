@@ -23,6 +23,9 @@
          <property name="text">
           <string>阵容5</string>
          </property>
+         <property name="lineup" stdset="0">
+          <string>lineup5</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -44,6 +47,9 @@
          <property name="text">
           <string>阵容4</string>
          </property>
+         <property name="lineup" stdset="0">
+          <string>lineup4</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -64,6 +70,9 @@
         <widget class="QRadioButton" name="radioButton_2">
          <property name="text">
           <string>阵容2</string>
+         </property>
+         <property name="lineup" stdset="0">
+          <string>lineup2</string>
          </property>
         </widget>
        </item>
@@ -113,6 +122,9 @@
          <property name="checked">
           <bool>true</bool>
          </property>
+         <property name="lineup" stdset="0">
+          <string>lineup1</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -133,6 +145,9 @@
         <widget class="QRadioButton" name="radioButton_3">
          <property name="text">
           <string>阵容3</string>
+         </property>
+         <property name="lineup" stdset="0">
+          <string>lineup3</string>
          </property>
         </widget>
        </item>

@@ -12,9 +12,9 @@ class CardLibraryWindow(QDialog):
         super().__init__()
         
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint )
-        self.setGeometry(300, 100, 510, 400)  # 设置窗口位置和大小
+        self.setGeometry(300, 100, 585, 450)  # 设置窗口位置和大小
         self.setStyleSheet("background-color: #EEE;")  # 设置背景透明
-        self.setFixedWidth(510)
+        self.setFixedWidth(585)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.cardLibraryRow = 0
@@ -84,6 +84,7 @@ class CardLibraryWindow(QDialog):
         
         self.cardLibraryRow = 0
         self.cardLibrarycolumn = 0
+        self.ui.gridLayout.setHorizontalSpacing(5)
         for filename in filenames:
             
             if(filename in self.lineup_images): 
@@ -92,6 +93,6 @@ class CardLibraryWindow(QDialog):
             pushButton.clicked.connect(partial(self.card_click_event, pushButton, self.ui.gridLayout, self.ui.horizontalLayout))
             self.ui.gridLayout.addWidget(pushButton, self.cardLibraryRow, self.cardLibrarycolumn, 1, 1, Qt.AlignmentFlag.AlignLeft)
             self.cardLibrarycolumn += 1
-            if self.cardLibrarycolumn == 9:
+            if self.cardLibrarycolumn == 10:
                 self.cardLibrarycolumn = 0
                 self.cardLibraryRow += 1

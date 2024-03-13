@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'card_library.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.3
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,18 +23,18 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(510, 400)
+        Dialog.resize(585, 450)
         self.verticalLayoutWidget = QWidget(Dialog)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(0, 0, 506, 158))
+        self.verticalLayoutWidget.setGeometry(QRect(0, 0, 590, 163))
         self.verticalLayout_2 = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setSizeConstraint(QLayout.SetMinimumSize)
-        self.verticalLayout_2.setContentsMargins(5, 5, 0, 0)
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 0)
         self.lineup_text = QLabel(self.verticalLayoutWidget)
         self.lineup_text.setObjectName(u"lineup_text")
-        self.lineup_text.setMinimumSize(QSize(500, 0))
-        self.lineup_text.setMaximumSize(QSize(16777215, 15))
+        self.lineup_text.setMinimumSize(QSize(570, 0))
+        self.lineup_text.setMaximumSize(QSize(570, 15))
 
         self.verticalLayout_2.addWidget(self.lineup_text)
 
@@ -42,7 +42,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.label_3 = QLabel(self.verticalLayoutWidget)
         self.label_3.setObjectName(u"label_3")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())

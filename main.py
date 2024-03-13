@@ -12,7 +12,7 @@ class TransparentWindow(QWidget):
     def __init__(self):
         super().__init__()
         
-        self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowCloseButtonHint | Qt.WindowType.WindowStaysOnTopHint)
         self.setGeometry(100, 100, 200, 200)  # 设置窗口位置和大小
         self.setStyleSheet("background-color: #EEE;")  # 设置背景透明
         self.ui = Ui_Form()
@@ -34,7 +34,7 @@ class TransparentWindow(QWidget):
         self.ui.pushButton_2.clicked.connect(self.on_start_state_clicked)
         self.ui.pushButton.clicked.connect(self.on_save_card_clicked)
         
-        self.select_lineup_name = self.ui.radioButton.objectName()
+        self.select_lineup_name = self.ui.radioButton.property('lineup')
         self.start_state = False
         self.save_card = False
         
@@ -52,6 +52,7 @@ class TransparentWindow(QWidget):
         while True:
             if self.start_state:
                 path = os.getcwd()+'\\select\\' + self.select_lineup_name
+                print(path)
                 files = tools.get_all_files(path)
                 for filename in files:
                     self.clicked = tools.get_card(path+'\\'+filename)
@@ -64,7 +65,7 @@ class TransparentWindow(QWidget):
             time.sleep(0.5)
         
     def on_button_clicked(self, button:QButtonGroup):
-        self.select_lineup_name = button.objectName()
+        self.select_lineup_name = button.property('lineup')
     
     def on_start_state_clicked(self):
         if self.start_state:
