@@ -1,11 +1,12 @@
-import pyautogui, pyscreeze
-import time
 import os
-from PIL import Image, ImageChops
-import numpy as np
+import time
 
-# 卡区坐标
-card_locate = (400, 920, 1490, 1080)
+import pyautogui
+import pyscreeze
+from PIL import Image
+
+# 卡区Box(x,y,w,h)
+card_locate = (400, 920, 1090, 160)
 # 第一张卡坐标
 card_first_locate = (180, 20)
 # 卡宽高
@@ -13,7 +14,8 @@ card_width_height = (74, 74)
 # 卡距
 card_distance = 127
 
-def locateCenterOnScreen(image: str, region = None):
+
+def locateCenterOnScreen(image: str, region=None):
     locate = None
     try:
         locate = pyautogui.locateCenterOnScreen(image, confidence=0.8, region=region)
@@ -21,93 +23,95 @@ def locateCenterOnScreen(image: str, region = None):
         return None
     return locate
 
+
+def locateOnImage(image, sub_image, confidence=0.9):
+    try:
+        locate = pyautogui.locate(sub_image, image, confidence=confidence)
+        return locate
+    except pyautogui.ImageNotFoundException:
+        return None
+
+
 def locateAllOnImage(image, sub_image, confidence=0.9):
     locate_list = []
     locate = None
     try:
         locate = pyautogui.locateAll(sub_image, image, confidence=confidence)
-        for l in locate:
-            locate_list.append(l)
+        for lce in locate:
+            locate_list.append(lce)
     except pyscreeze.ImageNotFoundException:
         return None
-    if(locate == None): return None
+    if locate is None:
+        return None
     return locate_list
 
-     
-def get_card(image: str):
-    locate = locateCenterOnScreen(image, card_locate)
-    if(locate != None):
+
+def get_card(image, sub_image):
+    locate = locateOnImage(image, sub_image, 0.8)
+    if locate is not None:
         print("检测到目标")
-        pyautogui.moveTo(locate.x, locate.y)
+        pyautogui.moveTo(card_locate[0] + locate.left + locate.width / 2,
+                         card_locate[1] + locate.top + locate.height / 2)
         pyautogui.mouseDown()
         pyautogui.mouseUp()
     return False
 
+
 def screen():
     imagename = '.\\screen\\' + str(int(round(time.time() * 1000))) + ".jpg"
-    image = pyautogui.screenshot(imagename)
-   
+    pyautogui.screenshot(imagename)
+
+
 def get_all_files(directory):
-        all_files = []
-        for dirpath, dirnames,filenames in os.walk(directory):
-            for filename in filenames:
-                all_files.append(filename)
-        return all_files
+    all_files = []
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            all_files.append(filename)
+    return all_files
+
 
 def get_all_folders(directory):
-        return [f for f in os.listdir(directory) if os.path.isdir(os.path.join(directory, f))]
+    return [f for f in os.listdir(directory) if os.path.isdir(os.path.join(directory, f))]
 
-def extract_cards(image:Image = None):
-    
+
+def extract_cards(image: Image = None):
     save_path = "./cards_test"
-    if image == None:
+    if image is None:
         image = pyautogui.screenshot(region=card_locate)
-        
-    locate = locateAllOnImage(image, "./icon/upgrade_flag.jpg")
-    if(locate == None): return
+
+    locate = locateOnImage(image, "./icon/upgrade_flag.jpg")
+    if locate is None:
+        return
     x = card_first_locate[0]
     y = card_first_locate[1]
     w = card_width_height[0]
     h = card_width_height[1]
     for i in range(4):
-        i+=1
+        i += 1
         use_image = image.copy()
-        use_image = use_image.crop((x,y,(x+w),(y+h)))
+        use_image = use_image.crop((x, y, (x + w), (y + h)))
         images = get_all_files(save_path)
         save = True
-        mse_num = 1000000000
         for card_image in images:
             card_image = Image.open(save_path + "/" + card_image)
-            if card_image.size == use_image.size: 
-                mse1 = mse(np.array(use_image), np.array(card_image))
-                if(mse1 < mse_num): mse_num = mse1
-                if(mse1 < 4000):
-                    save = False
-                    break
+            contrast = locateOnImage(use_image, card_image)
+            if contrast is None:
+                save = False
+                break
         if save:
-            print(mse_num)
             save_name = str(int(round(time.time() * 1000)))
-            use_image.save(save_path  + "/" + save_name + ".jpg", format="JPEG")
-            image.save(save_path  + "/" + save_name + "_1.jpg", format="JPEG")
-            
+            use_image.save(save_path + "/" + save_name + ".jpg", format="JPEG")
+            image.save(save_path + "/" + save_name + "_1.jpg", format="JPEG")
+
         x = x + w + card_distance
 
-def mse(imageA, imageB):
-	# 计算两张图片的MSE相似度
-	# 注意：两张图片必须具有相同的维度，因为是基于图像中的对应像素操作的
-    # 对应像素相减并将结果累加起来
-	err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
-	# 进行误差归一化
-	err /= float(imageA.shape[0] * imageA.shape[1])
-	
-	# 返回结果，该值越小越好，越小说明两张图像越相似
-	return err
 
 def test_extract_cards():
     imagenames = get_all_files("./screen")
     for game_imagename in imagenames:
-        game_image = Image.open( "./screen/" + game_imagename)
-        game_image = game_image.crop(card_locate)
+        game_image = Image.open("./screen/" + game_imagename)
+        x = card_locate[0]
+        y = card_locate[1]
+        game_image = game_image.crop(box=(x, y, x + card_locate[2], y + card_locate[3]))
+        game_image.show()
         extract_cards(game_image)
-
-# test_extract_cards()
