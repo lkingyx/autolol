@@ -9,6 +9,7 @@ from PySide6.QtGui import QCloseEvent
 import tools
 from main_ui import Ui_Form
 from card_library import CardLibraryWindow
+from key_listener import KeyListener
 
 
 class TransparentWindow(QWidget):
@@ -103,7 +104,10 @@ class TransparentWindow(QWidget):
 
 
 if __name__ == '__main__':
+    
     app = QApplication(sys.argv)
     window = TransparentWindow()
     window.show()
+    KeyListener(window.activateWindow)
+    #self.executor.submit(.start)
     sys.exit(app.exec())
