@@ -102,12 +102,14 @@ class TransparentWindow(QWidget):
         self.executor.shutdown()
         event.accept()
 
-
 if __name__ == '__main__':
-    
+
+    keyListener = KeyListener()
+    keyListener.start()
     app = QApplication(sys.argv)
     window = TransparentWindow()
+    keyListener.setWindow(window)
     window.show()
-    KeyListener(window.activateWindow)
+    
     #self.executor.submit(.start)
     sys.exit(app.exec())

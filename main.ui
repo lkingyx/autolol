@@ -93,7 +93,7 @@
        <item>
         <widget class="QPushButton" name="pushButton_2">
          <property name="text">
-          <string>自动拿卡：关</string>
+          <string>F2 - 自动拿卡：关</string>
          </property>
          <property name="get_state" stdset="0">
           <bool>false</bool>
@@ -106,7 +106,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>自动存卡：关</string>
+          <string>F3 - 自动存卡：关</string>
          </property>
         </widget>
        </item>
