@@ -18,6 +18,8 @@ class KeyListener():
         if key == keyboard.Key.f3:
             self.window.activateWindow()
             self.window.on_save_card_clicked()
+        if key == keyboard.KeyCode.from_char('f'):
+            self.window.previous_position = (0,0)
 
     def on_release(self, key):
         pass

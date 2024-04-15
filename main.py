@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import pyautogui
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QWidget, QButtonGroup, QPushButton
@@ -10,7 +11,6 @@ import tools
 from main_ui import Ui_Form
 from card_library import CardLibraryWindow
 from key_listener import KeyListener
-
 
 class TransparentWindow(QWidget):
     def __init__(self):
@@ -42,6 +42,8 @@ class TransparentWindow(QWidget):
         self.start_state = False
         self.save_card = False
         self.colse = False
+        self.previous_position = (0,0)
+        self.condition = threading.Condition()
 
         # 创建一个线程池对象
         self.executor = ThreadPoolExecutor(max_workers=15)
@@ -60,11 +62,16 @@ class TransparentWindow(QWidget):
                 files = tools.get_all_files(path)
                 image = pyautogui.screenshot(region=tools.card_locate)
                 # 提交任务给线程池执行
-                results = [self.executor.submit(tools.get_card, image, path + '\\' + filename) for filename in files]
+                results = [self.executor.submit(tools.get_card_position, image, path + '\\' + filename) for filename in files]
 
                 # 获取任务执行结果
-                for future in as_completed(results):
-                    future.result()
+                results = [future.result() for future in as_completed(results) if future.result() != (0,0)]
+                for res in results:
+                    if tools.get_card(res, self.previous_position):
+                        self.previous_position = res
+            else:
+                with self.condition:
+                    self.condition.wait()
 
     def screen(self):
         while True:
@@ -83,6 +90,8 @@ class TransparentWindow(QWidget):
             self.ui.pushButton_2.setText(self.ui.pushButton_2.text().replace("开", "关"))
         else:
             self.start_state = True
+            with self.condition:
+                self.condition.notify()
             self.ui.pushButton_2.setText(self.ui.pushButton_2.text().replace("关", "开"))
 
     def on_save_card_clicked(self):
@@ -99,6 +108,8 @@ class TransparentWindow(QWidget):
     def closeEvent(self, event: QCloseEvent):
         # 在这里编写窗口关闭时的处理逻辑
         self.colse = True
+        with self.condition:
+            self.condition.notify()
         self.executor.shutdown()
         event.accept()
 

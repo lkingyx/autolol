@@ -4,6 +4,7 @@ import time
 import pyautogui
 import pyscreeze
 from PIL import Image
+from pynput import mouse
 
 # 卡区Box(x,y,w,h)
 card_locate = (400, 920, 1090, 160)
@@ -13,7 +14,13 @@ card_first_locate = (180, 20)
 card_width_height = (74, 74)
 # 卡距
 card_distance = 127
+def getMousePosition():
+    # 创建一个鼠标控制器对象
+    controller = mouse.Controller()
 
+    # 获取当前鼠标的位置
+    current_position = controller.position
+    return current_position
 
 def locateCenterOnScreen(image: str, region=None):
     locate = None
@@ -46,16 +53,29 @@ def locateAllOnImage(image, sub_image, confidence=0.9):
     return locate_list
 
 
-def get_card(image, sub_image):
+def get_card_position(image, sub_image):
     locate = locateOnImage(image, sub_image, 0.8)
+    x = 0
+    y = 0
     if locate is not None:
         print("检测到目标")
-        pyautogui.moveTo(card_locate[0] + locate.left + locate.width / 2,
-                         card_locate[1] + locate.top + locate.height / 2)
-        pyautogui.mouseDown()
-        pyautogui.mouseUp()
-    return False
+        x = card_locate[0] + locate.left + locate.width / 2
+        y = card_locate[1] + locate.top + locate.height / 2
+    return (x, y)
 
+def get_card(position, previous_position):
+    x = position[0]
+    y = position[1]
+    if previous_position == position:
+        return False
+    while position != getMousePosition():
+        pyautogui.moveTo(x,y)
+        if position == getMousePosition():
+            pyautogui.mouseDown()
+            pyautogui.mouseUp()
+            return True
+        pyautogui.sleep(0.01)
+    return False
 
 def screen():
     imagename = '.\\screen\\' + str(int(round(time.time() * 1000))) + ".jpg"
