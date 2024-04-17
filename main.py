@@ -78,7 +78,7 @@ class TransparentWindow(QWidget):
             if self.colse:
                 return
             if self.save_card:
-                tools.extract_cards()
+                tools.screen()
             time.sleep(0.5)
 
     def on_button_clicked(self, button: QButtonGroup):
