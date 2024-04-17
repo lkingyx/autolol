@@ -78,8 +78,8 @@ class TransparentWindow(QWidget):
             if self.colse:
                 return
             if self.save_card:
-                tools.screen()
-            time.sleep(0.5)
+                tools.extract_cards()
+            time.sleep(0.1)
 
     def on_button_clicked(self, button: QButtonGroup):
         self.select_lineup_name = button.property('lineup')

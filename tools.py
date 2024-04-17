@@ -121,13 +121,14 @@ def count_black_pixels(image: Image):
     return  black_pixel_count / (width * height)
 
 def extract_cards(image: Image = None):
-    save_path = "./cards_test"
+    save_path = "./cards"
     if image is None:
         image = pyautogui.screenshot(region=card_locate)
-
     locate = locateOnImage(image, "./icon/jinbi.jpg", confidence=0.8)
     if locate is None:
         return
+    imagename = '.\\screen\\' + str(int(round(time.time() * 1000))) + ".jpg"
+    image.save(imagename)
     x = card_first_locate[0]
     y = card_first_locate[1]
     w = card_width_height[0]

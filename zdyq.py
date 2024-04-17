@@ -13,7 +13,7 @@ class ZDYQ():
         listener.start()
         
     def on_click(self, x,y,b,is_press):
-        self.press = is_press;
+        self.press = is_press
         if(self.press and b == mouse.Button.left):
             self.mouse_location = (x, y)
             self.is_lock = True

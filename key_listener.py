@@ -25,13 +25,7 @@ class KeyListener():
     def on_release(self, key):
         pass
         
-    def on_click(self,x,y,b,b2):
-        print(x)
-        print(y)
-        print(b)
-        print(b2)
     def start(self):
         self.listener = keyboard.Listener(on_press = self.on_press,on_release = self.on_release)
         self.listener.start()
-        mouse.Listener(on_click=self.on_click).start()
         
