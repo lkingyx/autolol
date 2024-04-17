@@ -1,5 +1,5 @@
 import time
-from pynput import keyboard
+from pynput import keyboard, mouse
 
 class KeyListener():
     
@@ -20,11 +20,18 @@ class KeyListener():
             self.window.on_save_card_clicked()
         if key == keyboard.KeyCode.from_char('f'):
             self.window.previous_position = (0,0)
+        print(key)
 
     def on_release(self, key):
         pass
         
+    def on_click(self,x,y,b,b2):
+        print(x)
+        print(y)
+        print(b)
+        print(b2)
     def start(self):
         self.listener = keyboard.Listener(on_press = self.on_press,on_release = self.on_release)
         self.listener.start()
+        mouse.Listener(on_click=self.on_click).start()
         
